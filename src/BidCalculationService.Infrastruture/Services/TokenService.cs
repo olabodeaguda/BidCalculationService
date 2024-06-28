@@ -5,17 +5,13 @@ using BidCalculationService.Domain.Interfaces.Services;
 using BidCalculationService.Infrastruture.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace BidCalculationService.Infrastruture.Services
 {
-    internal class TokenService : ITokenService
+    public class TokenService : ITokenService
     {
         private const long expirationSeconds = 3600;
 
