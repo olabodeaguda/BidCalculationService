@@ -68,6 +68,7 @@
 <script>
 import { ref, onMounted } from 'vue';
 import PaginationComponent from '../components/PaginationComponent.vue';
+import { state } from '@/utils/state';
 
 export default {
   name: 'BidView',
@@ -83,12 +84,23 @@ export default {
     const fetchBids = async (newPage) => {
       try {
         const pNumber = newPage + 1;
-        const response = await fetch(`api/v1/bids?pageNumber=${pNumber}&pageSize=${pageSize.value}`);
+        const response = await fetch(`api/v1/bids?pageNumber=${pNumber}&pageSize=${pageSize.value}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${state.token}`
+          }
+        });
         const data = await response.json();
-        bids.value = data.items;
-        totalPages.value = data.totalPages;
+        if (response.ok === true) {
+          bids.value = data.items;
+          totalPages.value = data.totalPages;
+        } else if (response.status === 401) {
+          this.$router.push('/login');
+        } else {
+          alert('Error fetching bids:');
+        }
       } catch (error) {
-        console.error('Error fetching bids:', error);
+        alert('Error fetching bids:', error);
       }
     };
 

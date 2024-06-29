@@ -3,7 +3,7 @@
         <div class="text-xl font-bold">
             Bid Calculator
         </div>
-        <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-4" v-show="showLoginBtn">
             <span v-if="state.isLoggedIn" class="text-gray-700">Welcome, {{ state.username }}</span>
             <button v-if="state.isLoggedIn" @click="logout"
                 class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
@@ -36,5 +36,10 @@ export default {
             this.$router.push("/login");
         },
     },
+    computed: {
+        showLoginBtn() {
+            return this.$route.path !== '/login';
+        }
+    }
 };
 </script>

@@ -5,6 +5,7 @@ using BidCalculationService.Application.Handlers.Queries;
 using BidCalculationService.Domain.Helpers;
 using BidCalculationService.Domain.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BidCalculationService.Api.Controllers
@@ -12,6 +13,7 @@ namespace BidCalculationService.Api.Controllers
     [ApiVersion(1.0)]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
+    [Authorize]
     public class BidsController : ControllerBase
     {
         private readonly IMediator _mediator;

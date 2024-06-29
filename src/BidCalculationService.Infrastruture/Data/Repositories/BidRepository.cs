@@ -23,7 +23,7 @@ namespace BidCalculationService.Infrastruture.Data.Repositories
         {
             try
             {
-                bid.BidBy = (Guid)_claimService.GetLogOnUserId()!;
+                bid.BidBy = _claimService.GetLogOnUserId()! ?? throw new Exception("User not found");
                 _appDbContext.Bids.Add(bid);
                 await _appDbContext.SaveChangesAsync();
                 return bid;
@@ -40,8 +40,13 @@ namespace BidCalculationService.Infrastruture.Data.Repositories
 
         public async Task<Pageable<Bid>> GetBidsPaginatedAsync(int pageNumber, int pageSize)
         {
-            var count = await _appDbContext.Bids.CountAsync();
-            var entities = await _appDbContext.Bids.Include(_ => _.Fees)
+            var query = _appDbContext.Bids.Include(_ => _.Fees).AsQueryable();
+            Guid? Id = (Guid?)_claimService.GetLogOnUserId() ?? null;
+            if (Id != null)
+                query = query.Where(_ => _.BidBy == Id);
+
+            var count = await query.CountAsync();
+            var entities = await query.Include(_ => _.Fees)
                 .OrderByDescending(_ => _.CreatedAt)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
