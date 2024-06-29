@@ -5,8 +5,8 @@ namespace BidCalculationService.Domain.Interfaces.Repositories
 {
     public interface IBidRepository
     {
-        Task<Bid?> CreateAsync(Bid bid);
+        Task<Bid?> CreateAsync(Bid bid, Guid value);
         Task<Bid?> GetAsync(long id);
-        Task<Pageable<Bid>> GetBidsPaginatedAsync(int pageNumber, int pageSize);
+        Task<Pageable<Bid>> GetBidsPaginatedAsync(int pageNumber, int pageSize, Guid userId);
     }
 }

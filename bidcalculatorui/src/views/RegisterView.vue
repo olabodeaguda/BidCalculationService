@@ -64,7 +64,7 @@ export default {
       };
 
       try {
-        const res = await fetch('api/v1/Accounts', {
+        const res = await fetch(`${process.env.VUE_APP_BASE_URL}/api/v1/Accounts`, {
           method: 'POST',
           headers: {
             'Content-type': 'application/json'

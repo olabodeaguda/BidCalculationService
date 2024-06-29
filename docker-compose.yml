@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: bidcalculationdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+
+  api:
+    image: bid-calculator-api
+    build:
+      context: .
+      dockerfile: src/dockerfile
+    restart: always
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    environment:
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=bidcalculationdb;Username=postgres;Password=password"
+      JwtSettings__SecretKey: "1ad30451da61a00b21d45bccc2924720fe4b2317e7cd68eb950b1103e677d23f"
+      JwtSettings__ExpiresinSeconds: 3600
+
+  ui:
+    image: bid-calculator-ui
+    build:
+      context: .
+      dockerfile: bidcalculatorui/dockerfile
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - api
+    environment:
+      VUE_APP_BASE_URL: "http://localhost:5050"

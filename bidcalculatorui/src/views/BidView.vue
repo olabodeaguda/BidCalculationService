@@ -84,7 +84,7 @@ export default {
     const fetchBids = async (newPage) => {
       try {
         const pNumber = newPage + 1;
-        const response = await fetch(`api/v1/bids?pageNumber=${pNumber}&pageSize=${pageSize.value}`, {
+        const response = await fetch(`${process.env.VUE_APP_BASE_URL}/api/v1/bids?pageNumber=${pNumber}&pageSize=${pageSize.value}`, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${state.token}`

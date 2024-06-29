@@ -60,7 +60,7 @@ export default {
     methods: {
         async fetchBidDetails() {
             try {
-                const response = await fetch(`/api/v1/bids/${this.$route.params.id}`, {
+                const response = await fetch(`${process.env.VUE_APP_BASE_URL}/api/v1/bids/${this.$route.params.id}`, {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${state.token}`

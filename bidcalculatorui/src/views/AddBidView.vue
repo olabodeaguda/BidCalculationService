@@ -49,7 +49,7 @@ export default {
                 return;
             }
             try {
-                const response = await fetch('api/v1/Bids', {
+                const response = await fetch(`${process.env.VUE_APP_BASE_URL}/api/v1/Bids`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

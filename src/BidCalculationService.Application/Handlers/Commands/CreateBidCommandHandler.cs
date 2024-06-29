@@ -20,24 +20,30 @@ namespace BidCalculationService.Application.Handlers.Commands
         private IFeeCalculatorService _feeCalculatorService;
         private IBidRepository _bidRepository;
         private IMapper _mapper;
+        private readonly IClaimService _claimService;
 
         public CreateBidCommandHandler(IBidRepository bidRepository, IMapper mapper,
-            IFeeCalculatorService feeCalculatorService)
+            IFeeCalculatorService feeCalculatorService, IClaimService claimService)
         {
             _bidRepository = bidRepository;
             _mapper = mapper;
             _feeCalculatorService = feeCalculatorService;
+            _claimService = claimService;
         }
 
         public async Task<Result<BidResponseDto>> Handle(CreateBidRequest request, CancellationToken cancellationToken)
         {
+            Guid? userId = _claimService.GetLogOnUserId();
+            if (!userId.HasValue)
+                return Result<BidResponseDto>.Failure(BidError.UserNotFound());
+
             Bid? bid = _mapper.Map<Bid>(request);
 
             Result<List<Fee>> fees = _feeCalculatorService.CalculateTotalFeesAsync(bid.VehicleType, bid.BasePrice);
             if (!fees.IsSuccess) return Result<BidResponseDto>.Failure(BidError.FeeCalculationFailed());
 
             bid.Fees = fees.Data!;
-            bid = await _bidRepository.CreateAsync(bid);
+            bid = await _bidRepository.CreateAsync(bid, userId.Value);
             if (bid == null)
                 return Result<BidResponseDto>.Failure(BidError.BidCalculationFailed());
 

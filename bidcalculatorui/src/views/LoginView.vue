@@ -42,7 +42,7 @@ export default {
     },
     methods: {
         async handleLogin() {
-            const res = await fetch("api/v1/Accounts/login", {
+            const res = await fetch(`${process.env.VUE_APP_BASE_URL}/api/v1/Accounts/login`, {
                 method: "POST",
                 headers: {
                     "Content-type": "application/json",

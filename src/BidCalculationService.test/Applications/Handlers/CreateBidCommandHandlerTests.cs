@@ -17,6 +17,7 @@ namespace BidCalculationService.test.Applications.Handlers
         private Mock<IMapper> _mapperMock;
         private Mock<IFeeCalculatorService> _feeCalculatorServiceMock;
         private CreateBidCommandHandler _handler;
+        private Mock<IClaimService> _claimServiceMock;
 
         [SetUp]
         public void SetUp()
@@ -24,7 +25,9 @@ namespace BidCalculationService.test.Applications.Handlers
             _bidRepositoryMock = new Mock<IBidRepository>();
             _mapperMock = new Mock<IMapper>();
             _feeCalculatorServiceMock = new Mock<IFeeCalculatorService>();
-            _handler = new CreateBidCommandHandler(_bidRepositoryMock.Object, _mapperMock.Object, _feeCalculatorServiceMock.Object);
+            _claimServiceMock = new Mock<IClaimService>();
+            _claimServiceMock.Setup(service => service.GetLogOnUserId()).Returns(Guid.NewGuid());
+            _handler = new CreateBidCommandHandler(_bidRepositoryMock.Object, _mapperMock.Object, _feeCalculatorServiceMock.Object, _claimServiceMock.Object);
         }
 
         [Test]
@@ -53,7 +56,7 @@ namespace BidCalculationService.test.Applications.Handlers
             _mapperMock.Setup(mapper => mapper.Map<Bid>(It.IsAny<CreateBidRequest>())).Returns(bid);
             _feeCalculatorServiceMock.Setup(service => service.CalculateTotalFeesAsync(It.IsAny<VehicleType>(), It.IsAny<decimal>()))
                 .Returns(Result<List<Fee>>.Success(bid.Fees.ToList()));
-            _bidRepositoryMock.Setup(repo => repo.CreateAsync(It.IsAny<Bid>())).ReturnsAsync((Bid?)null);
+            _bidRepositoryMock.Setup(repo => repo.CreateAsync(It.IsAny<Bid>(), It.IsAny<Guid>())).ReturnsAsync((Bid?)null);
 
             var result = await _handler.Handle(request, CancellationToken.None);
 
@@ -72,7 +75,7 @@ namespace BidCalculationService.test.Applications.Handlers
             _mapperMock.Setup(mapper => mapper.Map<Bid>(request)).Returns(bid);
             _feeCalculatorServiceMock.Setup(service => service.CalculateTotalFeesAsync(It.IsAny<VehicleType>(), It.IsAny<decimal>()))
                 .Returns(Result<List<Fee>>.Success(bid.Fees.ToList()));
-            _bidRepositoryMock.Setup(repo => repo.CreateAsync(It.IsAny<Bid>())).ReturnsAsync(bid);
+            _bidRepositoryMock.Setup(repo => repo.CreateAsync(It.IsAny<Bid>(), It.IsAny<Guid>())).ReturnsAsync(bid);
             _mapperMock.Setup(mapper => mapper.Map<BidResponseDto>(It.IsAny<Bid>())).Returns(bidResponseDto);
 
             var result = await _handler.Handle(request, CancellationToken.None);
