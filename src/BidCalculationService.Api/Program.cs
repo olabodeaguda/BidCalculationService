@@ -23,6 +23,17 @@ builder.Services.AddInfrastructure(configuration);
 builder.Services.AddDatabase(configuration);
 builder.Services.AddAuthentication(configuration);
 
+builder.Services.AddCors(Options =>
+{
+    Options.AddPolicy("AllowCors",
+        builder =>
+        builder
+        .AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+            );
+});
+
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -51,7 +62,7 @@ builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwa
 
 var app = builder.Build();
 
-
+app.UseCors("AllowCors");
 app.UseSwagger();
 app.UseSwaggerUI(_ =>
 {

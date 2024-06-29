@@ -19,7 +19,6 @@ namespace BidCalculationService.Infrastruture.Data.Repositories
             _claimService = claimService;
         }
 
-
         public async Task<Bid?> CreateAsync(Bid bid)
         {
             try
@@ -43,6 +42,7 @@ namespace BidCalculationService.Infrastruture.Data.Repositories
         {
             var count = await _appDbContext.Bids.CountAsync();
             var entities = await _appDbContext.Bids.Include(_ => _.Fees)
+                .OrderByDescending(_ => _.CreatedAt)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToArrayAsync();
