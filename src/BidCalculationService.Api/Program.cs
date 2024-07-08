@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Microsoft.AspNetCore.Diagnostics;
 using System.Text.Json.Serialization;
+using BidCalculationService.Api.Configurations;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,7 +22,7 @@ builder.Services.AddExceptionHandler<ExceptionHandler>();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(configuration);
 builder.Services.AddDatabase(configuration);
-builder.Services.AddAuthentication(configuration);
+builder.Services.AddOpenIDAuthentication(configuration);
 
 builder.Services.AddCors(Options =>
 {
@@ -68,6 +69,9 @@ app.UseSwaggerUI(_ =>
 {
     _.SwaggerEndpoint("swagger/v1/swagger.json", "Car bidding calculation service");
     _.RoutePrefix = string.Empty;
+_.OAuthClientId(configuration.GetValue<string>("JwtSettings:ClientId"));
+    _.OAuthClientSecret(configuration.GetValue<string>("JwtSettings:ClientSecret"));
+    _.OAuthUsePkce();
 });
 
 app.UseHttpsRedirection();

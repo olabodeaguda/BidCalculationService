@@ -20,7 +20,7 @@ namespace BidCalculationService.Infrastruture.Services
             try
             {
                 if (_httpContext?.User == null) return null;
-                var email = _httpContext?.User.Claims.SingleOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+                var email = _httpContext?.User.Claims.SingleOrDefault(c => c.Type.Equals("name", StringComparison.CurrentCultureIgnoreCase));
                 if (email == null) return null;
 
                 return email.Value;
@@ -37,7 +37,7 @@ namespace BidCalculationService.Infrastruture.Services
             try
             {
                 if (_httpContext?.User == null) return null;
-                var sub = _httpContext?.User.Claims.SingleOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+                var sub = _httpContext?.User.Claims.SingleOrDefault(c => c.Type.Equals("Sub", StringComparison.CurrentCultureIgnoreCase));
                 if (sub == null) return null;
 
                 bool isValid = Guid.TryParse(sub.Value, out var userId);
